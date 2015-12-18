@@ -1,4 +1,4 @@
-angular.module('homeDash', ['ui.router', 'templates'])
+var homedash = angular.module('homeDash', ['ui.router', 'templates', 'highcharts-ng'])
 .config([ '$stateProvider', '$urlRouterProvider',
 function($stateProvider, $urlRouterProvider) {
   $stateProvider
