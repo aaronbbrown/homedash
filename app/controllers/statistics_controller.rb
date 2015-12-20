@@ -20,8 +20,12 @@ class StatisticsController < ApplicationController
     case params[:id]
     when 'monthly_gen_year'
       result = monthly_gen_year
+    when 'monthly_use_year'
+      result = monthly_use_year
     when 'daily_gen_hour'
       result = daily_gen_hour
+    when 'daily_use_hour'
+      result = daily_use_hour
     else
       raise ActionController::RoutingError.new('Not Found')
       false
@@ -30,11 +34,28 @@ class StatisticsController < ApplicationController
   end
 
   def monthly_gen_year
-    Series.monthly_by_year(register_name: 'gen')
+    Rails.cache.fetch("monthly_gen_year", expires_in: 1.hours) do
+      Series.monthly_by_year(register_name: 'gen')
+    end
   end
 
+  def monthly_use_year
+    Rails.cache.fetch("monthly_use_year", expires_in: 1.hours) do
+      Series.monthly_by_year(register_name: 'use')
+    end
+  end
+
+
   def daily_gen_hour
-    Series.daily_by_hour(register_name: 'gen')
+    Rails.cache.fetch("daily_gen_hour", expires_in: 1.hours) do
+      Series.daily_by_hour(register_name: 'gen')
+    end
+  end
+
+  def daily_use_hour
+    Rails.cache.fetch("daily_use_hour", expires_in: 1.hours) do
+      Series.daily_by_hour(register_name: 'use')
+    end
   end
 
 private

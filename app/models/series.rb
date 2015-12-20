@@ -86,6 +86,11 @@ class Series < Sequel::Model
     end
 
     def daily_by_hour(register_name:)
+      hourly_restriction_sql = nil
+      if register_name == 'gen'
+        hourly_restriction_sql = "AND date_part('hour',time) BETWEEN 5 AND 21"
+      end
+
       sql = <<-SQL
         SELECT date(time) AS date,
                date_part('hour', time) as hour,
@@ -93,8 +98,8 @@ class Series < Sequel::Model
         FROM series s
         JOIN registers r ON r.id = s.register_id
         WHERE r.name = ?
-          AND time > now() - interval '1 year'
-          AND date_part('hour',time) BETWEEN 5 AND 21
+          AND time > date_trunc('day', now() - interval '1 year')
+          #{hourly_restriction_sql}
         GROUP BY date(time), date_part('hour',time)
         ORDER BY date(time), date_part('hour',time);
       SQL
@@ -104,7 +109,11 @@ class Series < Sequel::Model
          row[:hour].to_i,
          row[:watt_hours].to_i ]
       end
-      { series: { data: data },
+      { series: {
+          data: data,
+          min_value: data.map { |x| x.last }.min,
+          max_value: data.map { |x| x.last }.max,
+        },
         labels: ['date','hour','Watt hours (Wh)']}
     end
   end
