@@ -1,3 +1,3 @@
-class Register < ActiveRecord::Base
-  has_many :series
+class Register < Sequel::Model
+  one_to_many :series
 end

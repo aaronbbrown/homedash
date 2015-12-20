@@ -1,56 +1,18 @@
-homedash.controller('HomeCtrl', ['$scope',
-function($scope) {
+homedash.controller('HomeCtrl', ['$scope', 'charts',
+function($scope, monthlyGenYear) {
   $scope.test = 'Hello, world!';
-
-  $scope.addPoints = function () {
-      var seriesArray = $scope.chartConfig.series
-      var rndIdx = Math.floor(Math.random() * seriesArray.length);
-      seriesArray[rndIdx].data = seriesArray[rndIdx].data.concat([1, 10, 20])
-  };
-
-  $scope.addSeries = function () {
-      var rnd = []
-      for (var i = 0; i < 10; i++) {
-          rnd.push(Math.floor(Math.random() * 20) + 1)
-      }
-      $scope.chartConfig.series.push({
-          data: rnd
-      })
-  }
-
-  $scope.removeRandomSeries = function () {
-      var seriesArray = $scope.chartConfig.series
-      var rndIdx = Math.floor(Math.random() * seriesArray.length);
-      seriesArray.splice(rndIdx, 1)
-  }
-
-  $scope.swapChartType = function () {
-      if (this.chartConfig.options.chart.type === 'line') {
-          this.chartConfig.options.chart.type = 'bar'
-      } else {
-          this.chartConfig.options.chart.type = 'line'
-          this.chartConfig.options.chart.zoomType = 'x'
-      }
-  }
-
-  $scope.toggleLoading = function () {
-      this.chartConfig.loading = !this.chartConfig.loading
-  }
 
   $scope.chartConfig = {
       options: {
-          chart: {
-              type: 'bar'
+          chart: { type: 'bar' },
+          xAxis: {
+            categories: monthlyGenYear.chart.categories
           }
       },
-      series: [{
-          data: [10, 15, 12, 8, 7]
-      }],
-      title: {
-          text: 'Hello'
-      },
-
+      series: monthlyGenYear.chart.series,
+      title: { text: 'Monthly Solar Generation By Year' },
       loading: false
   }
 
+  console.log($scope.chartConfig);
 }]);

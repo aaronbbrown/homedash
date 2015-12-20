@@ -1,11 +1,19 @@
-var homedash = angular.module('homeDash', ['ui.router', 'templates', 'highcharts-ng'])
+var homedash = angular.module('homeDash', [
+'ui.router',
+'templates',
+'highcharts-ng'])
 .config([ '$stateProvider', '$urlRouterProvider',
 function($stateProvider, $urlRouterProvider) {
   $stateProvider
     .state('home', {
           url: '/home',
           templateUrl: 'home/_home.html',
-          controller: 'HomeCtrl'
+          controller: 'HomeCtrl',
+          resolve: {
+            monthlyGenYear: ['charts', function(charts) {
+              return charts.getMonthlyGenYear();
+            }]
+          }
         });
 
   $urlRouterProvider.otherwise('/home');

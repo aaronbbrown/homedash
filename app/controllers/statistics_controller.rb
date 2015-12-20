@@ -26,7 +26,7 @@ class StatisticsController < ApplicationController
   end
 
   def monthly_gen_year
-    Series.monthly_gen_year
+    Series.monthly_by_year(register_name: 'gen')
   end
 
 private

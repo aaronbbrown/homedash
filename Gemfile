@@ -16,6 +16,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'angular-rails-templates', '>= 0.2.0'
 gem 'responders', '>= 2.0'
 gem 'pg'
+gem 'sequel-rails'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
