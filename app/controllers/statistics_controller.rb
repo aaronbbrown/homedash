@@ -7,8 +7,10 @@ class StatisticsController < ApplicationController
       statistics: [
         { name: 'monthly_gen_year',
           description: 'Solar generation month over month, by year',
-          uri: build_statistics_uri('monthly_gen_year')
-        }
+          uri: build_statistics_uri('monthly_gen_year') },
+        { name: 'daily_gen_hour',
+          description: 'Daily solar generation by hour',
+          uri: build_statistics_uri('daily_gen_by_hour') }
       ]
     }
     respond_with response
@@ -18,6 +20,8 @@ class StatisticsController < ApplicationController
     case params[:id]
     when 'monthly_gen_year'
       result = monthly_gen_year
+    when 'daily_gen_hour'
+      result = daily_gen_hour
     else
       raise ActionController::RoutingError.new('Not Found')
       false
@@ -27,6 +31,10 @@ class StatisticsController < ApplicationController
 
   def monthly_gen_year
     Series.monthly_by_year(register_name: 'gen')
+  end
+
+  def daily_gen_hour
+    Series.daily_by_hour(register_name: 'gen')
   end
 
 private

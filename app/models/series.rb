@@ -84,5 +84,28 @@ class Series < Sequel::Model
       { series: series,
         categories: Date::MONTHNAMES.compact }
     end
+
+    def daily_by_hour(register_name:)
+      sql = <<-SQL
+        SELECT date(time) AS date,
+               date_part('hour', time) as hour,
+               abs(sum(watt_hours)) as watt_hours
+        FROM series s
+        JOIN registers r ON r.id = s.register_id
+        WHERE r.name = ?
+          AND time > now() - interval '1 year'
+          AND date_part('hour',time) BETWEEN 5 AND 21
+        GROUP BY date(time), date_part('hour',time)
+        ORDER BY date(time), date_part('hour',time);
+      SQL
+      results = Sequel::Model.db[sql, register_name]
+      data = results.map do |row|
+        [row[:date].to_time.to_i * 1000,
+         row[:hour].to_i,
+         row[:watt_hours].to_i ]
+      end
+      { series: { data: data },
+        labels: ['date','hour','Watt hours (Wh)']}
+    end
   end
 end

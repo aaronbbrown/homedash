@@ -4,12 +4,21 @@ function($http) {
   var o = {
     chart: {}
   };
+
   o.getMonthlyGenYear = function() {
     return $http.get('/statistics/monthly_gen_year.json')
-             .success(function(data) {
-               angular.copy(data, o.chart);
+             .then(function(res) {
+               return res.data;
              });
   };
+
+  o.getDailyGenHour = function() {
+    return $http.get('/statistics/daily_gen_hour.json')
+             .then(function(res) {
+               return res.data;
+             });
+  };
+
 /*
   o.create = function(post) {
     console.log(post);

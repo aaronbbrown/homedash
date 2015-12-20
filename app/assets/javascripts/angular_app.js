@@ -6,15 +6,19 @@ var homedash = angular.module('homeDash', [
 function($stateProvider, $urlRouterProvider) {
   $stateProvider
     .state('home', {
-          url: '/home',
-          templateUrl: 'home/_home.html',
-          controller: 'HomeCtrl',
-          resolve: {
-            monthlyGenYear: ['charts', function(charts) {
-              return charts.getMonthlyGenYear();
-            }]
-          }
-        });
+      url: '/home',
+      templateUrl: 'home/_home.html',
+      controller: 'HomeCtrl',
+      resolve: {
+        monthlyGenYear: ['charts', function(charts) {
+          return charts.getMonthlyGenYear();
+        }],
+
+        dailyGenHour: ['charts', function(charts) {
+          return charts.getDailyGenHour();
+        }]
+      }
+    });
 
   $urlRouterProvider.otherwise('/home');
 }
