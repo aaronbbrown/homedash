@@ -21,18 +21,6 @@ class Series < Sequel::Model
       end
     end
 
-    def generation_since(start, register_name)
-      query = <<-SQL
-        select sum(watt_hours) as sum_wh
-        from series s
-        join registers r
-          ON r.id = s.register_id
-        where time >= ?
-          and r.name = ?
-      SQL
-      result = Sequel::Model.db[query, start, register_name].first
-      result[:sum_wh].nil? ? 0 : result[:sum_wh].abs.round(1)
-    end
 
     # make an array of categories
     # pad incoming data so the data array
@@ -47,9 +35,7 @@ class Series < Sequel::Model
     end
 
     def monthly_by_year(register_name:)
-      now = Time.new
-      results = Sequel::Model.db[:registers].select(:id).where(name: register_name).first
-      register_id = results[:id]
+      register_id = Register.first(name: register_name).id
 
       # postgres is bad at select distinct queries.  Use a recursive query
       # http://zogovic.com/post/44856908222/optimizing-postgresql-query-for-distinct-values
@@ -73,19 +59,14 @@ class Series < Sequel::Model
 
       years = Sequel::Model.db[query, register_id, register_id].map { |row| row[:year].to_i }
 
-      query = <<-SQL
-        SELECT abs(sum(watt_hours)) as watt_hours, date_trunc('month', time) as month
-        FROM series s
-        JOIN registers r
-          ON r.id = s.register_id
-        WHERE r.name = ?
-          AND date_part('year', time) = ?
-        GROUP BY date_trunc('month', time)
-        ORDER BY date_trunc('month', time)
-      SQL
-
       series = years.map do |year|
-        results = Sequel::Model.db[query, register_name, year]
+        results = Series.
+          select { [abs(sum(:watt_hours)).as('watt_hours'),
+                    date_trunc('month', :time).as('month')] }.
+          where(register_id: register_id).
+          where { date_part('year', :time) =~ year }.
+          group_by { date_trunc('month', :time) }.
+          order_by { date_trunc('month', :time) }
 
         points = Hash[results.map do |row|
           [Date::MONTHNAMES[row[:month].month], row[:watt_hours].to_i]
@@ -103,6 +84,7 @@ class Series < Sequel::Model
     # get historical average by computing the average wh generated each hour
     # during this week in previous years.
     def hourly_historical_average(register_name:)
+      register_id = Register.first(name: register_name).id
       query = <<-SQL
         SELECT abs(avg(sum_wh)) as avg_wh,
                date_part('hour', time_hour) as hour
@@ -110,9 +92,7 @@ class Series < Sequel::Model
           SELECT sum(watt_hours) as sum_wh,
                  date_trunc('hour', time) as time_hour
           FROM series s
-          JOIN registers r
-            ON r.id = s.register_id
-          WHERE r.name = ?
+          WHERE register_id = ?
             AND date_part('week', time) = date_part('week', now())
             #{hourly_restriction_sql(register_name: register_name)}
             AND date_part('year', time) < date_part('year', now())
@@ -122,7 +102,7 @@ class Series < Sequel::Model
         GROUP BY date_part('hour', time_hour)
         ORDER BY date_part('hour', time_hour)
       SQL
-      results = Sequel::Model.db[query, register_name]
+      results = Sequel::Model.db[query, register_id]
       points = Hash[results.map do |row|
         [row[:hour].to_i, row[:avg_wh].to_i]
       end]
@@ -136,19 +116,19 @@ class Series < Sequel::Model
 
     # get watt_hours by hour for today next to historical average
     def hourly_today(register_name:)
+      register_id = Register.first(name: register_name).id
+
       query = <<-SQL
         SELECT abs(sum(watt_hours)) as watt_hours,
                date_part('hour', time) as hour
         FROM series s
-        JOIN registers r
-          ON r.id = s.register_id
-        WHERE r.name = ?
+        WHERE register_id = ?
           AND date(time) = date(now())
           #{hourly_restriction_sql(register_name: register_name)}
         GROUP BY date_part('hour', time)
         ORDER BY date_part('hour', time)
       SQL
-      results = Sequel::Model.db[query, register_name]
+      results = Sequel::Model.db[query, register_id]
       points = Hash[results.map do |row|
         [ row[:hour].to_i, row[:watt_hours].to_i ]
       end]
@@ -160,20 +140,22 @@ class Series < Sequel::Model
         ] }
     end
 
+    # this is used in the heat map for hourly data over the course of an
+    # entire year.
     def daily_by_hour(register_name:)
+      register_id = Register.first(name: register_name).id
       sql = <<-SQL
         SELECT date(time) AS date,
                date_part('hour', time) as hour,
                abs(sum(watt_hours)) as watt_hours
         FROM series s
-        JOIN registers r ON r.id = s.register_id
-        WHERE r.name = ?
+        WHERE register_id = ?
           AND time > date_trunc('day', now() - interval '1 year')
           #{hourly_restriction_sql(register_name: register_name)}
         GROUP BY date(time), date_part('hour',time)
         ORDER BY date(time), date_part('hour',time);
       SQL
-      results = Sequel::Model.db[sql, register_name]
+      results = Sequel::Model.db[sql, register_id]
       data = results.map do |row|
         [row[:date].to_time.to_i * 1000,
          row[:hour].to_i,
