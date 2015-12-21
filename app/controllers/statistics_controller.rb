@@ -1,6 +1,6 @@
 class StatisticsController < ApplicationController
   before_action :ensure_json_request
-  skip_before_action :verify_authenticity_token 
+  skip_before_action :verify_authenticity_token
 
   def index
     response = {
@@ -16,21 +16,28 @@ class StatisticsController < ApplicationController
     respond_with response
   end
 
-  def show
-    case params[:id]
-    when 'monthly_gen_year'
-      result = monthly_gen_year
-    when 'monthly_use_year'
-      result = monthly_use_year
-    when 'daily_gen_hour'
-      result = daily_gen_hour
-    when 'daily_use_hour'
-      result = daily_use_hour
-    else
-      raise ActionController::RoutingError.new('Not Found')
-      false
+  def show_by_register
+    result = Rails.cache.fetch("#{params[:id]}_#{params[:register]}", expires_in: 1.hour) do
+      case params[:id]
+      when 'monthly_by_year'
+        Series.monthly_by_year(register_name: params[:register])
+      when 'hourly_past_year'
+        Series.daily_by_hour(register_name: params[:register])
+      when 'hourly_vs_historical'
+        hourly_vs_historical(register_name: params[:register])
+      else
+        raise ActionController::RoutingError.new('Not Found')
+        false
+      end
     end
     respond_with result
+  end
+
+  def hourly_vs_historical(register_name:)
+    today = Series.hourly_today(register_name: register_name)
+    historical = Series.hourly_historical_average(register_name: register_name)
+    { categories: today[:categories],
+      series: today[:series] + historical[:series] }
   end
 
   def monthly_gen_year

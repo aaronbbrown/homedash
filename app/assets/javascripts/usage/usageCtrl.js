@@ -3,9 +3,10 @@ homedash.controller('UsageCtrl', [
 'charts',
 'monthlyUsageYear',
 'hourlyUsagePastYear',
+'hourlyVsHistorical',
 
-function($scope, charts, monthlyUsageYear, hourlyUsagePastYear) {
-console.log(monthlyUsageYear);
+function($scope, charts, monthlyUsageYear, hourlyUsagePastYear, hourlyVsHistorical) {
   $scope.muyChartConfig = monthlyUsageYear;
   $scope.hupyChartConfig = hourlyUsagePastYear;
+  $scope.hvhChartConfig = hourlyVsHistorical;
 }]);

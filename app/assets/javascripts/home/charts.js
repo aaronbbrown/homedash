@@ -18,9 +18,9 @@ function($http) {
     return result;
   };
 
-  o.getMonthlyByYear = function(register) {
+  o.getHourlyVsHistorical = function(register) {
     var nice_name = this.niceNameFromRegister(register);
-    return $http.get('/statistics/monthly_'+register+'_year.json')
+    return $http.get('/statistics/hourly_vs_historical/'+register+'.json')
              .then(function(res) {
                 var chartConfig = {
                   options: {
@@ -30,7 +30,27 @@ function($http) {
                       }
                   },
                   series: res.data.series,
-                  title: { text: 'Monthly '+nice_name+' Generation By Year' },
+                  title: { text: 'Hourly '+nice_name+' vs Historical' },
+                  loading: false
+                };
+
+               return chartConfig;
+             });
+  };
+
+  o.getMonthlyByYear = function(register) {
+    var nice_name = this.niceNameFromRegister(register);
+    return $http.get('/statistics/monthly_by_year/'+register+'.json')
+             .then(function(res) {
+                var chartConfig = {
+                  options: {
+                      chart: { type: 'bar' },
+                      xAxis: {
+                        categories: res.data.categories
+                      }
+                  },
+                  series: res.data.series,
+                  title: { text: 'Monthly '+nice_name+' By Year' },
                   loading: false
                 };
 
@@ -52,7 +72,7 @@ function($http) {
       break;
     };
 
-    return $http.get('/statistics/daily_' + register +'_hour.json')
+    return $http.get('/statistics/hourly_past_year/' + register +'.json')
              .then(function(res) {
                 var chartConfig = {
                   options: {

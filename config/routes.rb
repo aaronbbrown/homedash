@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   # root 'welcome#index'
   root to: 'base#angular'
   resources :statistics, only: [:index, :show], defaults: { format: :json }
+  get '/statistics/:id/:register' => 'statistics#show_by_register'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

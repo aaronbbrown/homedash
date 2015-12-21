@@ -16,7 +16,12 @@ function($stateProvider, $urlRouterProvider) {
 
         dailyGenHour: ['charts', function(charts) {
           return charts.getHourlyPastYear('gen');
+        }],
+
+        hourlyVsHistorical: ['charts', function(charts) {
+          return charts.getHourlyVsHistorical('gen');
         }]
+
       }
 
     })
@@ -31,8 +36,11 @@ function($stateProvider, $urlRouterProvider) {
 
         hourlyUsagePastYear: ['charts', function(charts) {
           return charts.getHourlyPastYear('use');
-        }]
+        }],
 
+        hourlyVsHistorical: ['charts', function(charts) {
+          return charts.getHourlyVsHistorical('use');
+        }]
       }
     });
 

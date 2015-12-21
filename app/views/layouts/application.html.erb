@@ -7,10 +7,13 @@
   <%= csrf_meta_tags %>
 </head>
 <body ng-app="homeDash">
-  <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="/#/home">Generation</a></li>
-    <li><a data-toggle="tab" href="/#/usage">Usage</a></li>
-  </ul>
+  <div id="navbar" ng-controller="NavbarCtrl as navbar" ng-init="init()">
+    <ul class="nav nav-tabs">
+      <li ng-repeat="tab in tabs" ng-class="{'active': tab.active }" ng-click="setActive(tab)">
+        <a data-toggle="tab" ng-href="{{ tab.href }}">{{ tab.name }}</a>
+      </li>
+    </ul>
+  </div>
 
   <div style="margin: 20px;" class="tab-content">
     <ui-view></ui-view>
