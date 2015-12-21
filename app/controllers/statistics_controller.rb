@@ -40,31 +40,6 @@ class StatisticsController < ApplicationController
       series: today[:series] + historical[:series] }
   end
 
-  def monthly_gen_year
-    Rails.cache.fetch("monthly_gen_year", expires_in: 1.hours) do
-      Series.monthly_by_year(register_name: 'gen')
-    end
-  end
-
-  def monthly_use_year
-    Rails.cache.fetch("monthly_use_year", expires_in: 1.hours) do
-      Series.monthly_by_year(register_name: 'use')
-    end
-  end
-
-
-  def daily_gen_hour
-    Rails.cache.fetch("daily_gen_hour", expires_in: 1.hours) do
-      Series.daily_by_hour(register_name: 'gen')
-    end
-  end
-
-  def daily_use_hour
-    Rails.cache.fetch("daily_use_hour", expires_in: 1.hours) do
-      Series.daily_by_hour(register_name: 'use')
-    end
-  end
-
 private
   def build_statistics_uri(stat_to_return)
     URI.join(request.base_url,
