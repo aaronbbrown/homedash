@@ -21,7 +21,6 @@ class Series < Sequel::Model
       end
     end
 
-
     # make an array of categories
     # pad incoming data so the data array
     # has a 1-1, 0 padded relationship with the categories
