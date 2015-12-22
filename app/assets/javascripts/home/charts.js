@@ -4,6 +4,7 @@ function($http) {
   var o = {
     chart: {}
   };
+  var pointWidth = 7;
 
   o.niceNameFromRegister = function(register) {
     var result = '';
@@ -24,10 +25,16 @@ function($http) {
              .then(function(res) {
                 var chartConfig = {
                   options: {
-                      chart: { type: 'bar' },
-                      xAxis: {
-                        categories: res.data.categories
+                    chart: { type: 'column' },
+                    xAxis: {
+                      categories: res.data.categories
+                    },
+                    plotOptions: {
+                      column: {
+                        pointWidth: pointWidth,
+                        groupPadding: 0.05,
                       }
+                    }
                   },
                   series: res.data.series,
                   title: { text: 'Hourly '+nice_name+' vs Historical' },
@@ -44,10 +51,17 @@ function($http) {
              .then(function(res) {
                 var chartConfig = {
                   options: {
-                      chart: { type: 'bar' },
-                      xAxis: {
-                        categories: res.data.categories
+                    chart: { type: 'column' },
+                    xAxis: {
+                      categories: res.data.categories
+                    },
+                    plotOptions: {
+                      column: {
+                        pointWidth: pointWidth,
+                        groupPadding: 0.1
                       }
+                    }
+
                   },
                   series: res.data.series,
                   title: { text: 'Monthly '+nice_name+' By Year' },
