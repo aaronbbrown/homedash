@@ -10,10 +10,13 @@ function($stateProvider, $urlRouterProvider) {
       templateUrl: 'home/_home.html',
       controller: 'HomeCtrl',
       resolve: {
-        monthlyGenYear: ['charts', function(charts) {
+        registerName: function() {
+          return 'gen';
+        },
+        monthlyByYear: ['charts', function(charts) {
           return charts.getMonthlyByYear('gen');
         }],
-        hourlyGenPastYear: ['charts', function(charts) {
+        hourlyByPastYear: ['charts', function(charts) {
           return charts.getHourlyPastYear('gen');
         }],
         hourlyVsHistorical: ['charts', function(charts) {
@@ -21,18 +24,28 @@ function($stateProvider, $urlRouterProvider) {
         }],
         ytdByYear: ['charts', function(charts) {
           return charts.getYtdByYear('gen');
+        }],
+        daily: ['charts', function(charts) {
+          return charts.getDaily('gen');
+        }],
+        currentWatts: ['charts', function(charts) {
+          return charts.getCurrentWatts('gen');
         }]
+
       }
 
     }).state('usage', {
       url: '/usage',
       templateUrl: 'home/_home.html',
-      controller: 'UsageCtrl',
+      controller: 'HomeCtrl',
       resolve: {
-        monthlyUsageYear: ['charts', function(charts) {
+        registerName: function() {
+          return 'use';
+        },
+        monthlyByYear: ['charts', function(charts) {
           return charts.getMonthlyByYear('use');
         }],
-        hourlyUsagePastYear: ['charts', function(charts) {
+        hourlyPastYear: ['charts', function(charts) {
           return charts.getHourlyPastYear('use');
         }],
         hourlyVsHistorical: ['charts', function(charts) {
@@ -40,6 +53,12 @@ function($stateProvider, $urlRouterProvider) {
         }],
         ytdByYear: ['charts', function(charts) {
           return charts.getYtdByYear('use');
+        }],
+        daily: ['charts', function(charts) {
+          return charts.getDaily('use');
+        }],
+        currentWatts: ['charts', function(charts) {
+          return charts.getCurrentWatts('use');
         }]
 
       }

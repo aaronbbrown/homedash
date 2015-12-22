@@ -19,8 +19,88 @@ function($http) {
     return result;
   };
 
+  o.getCurrentWatts = function(register) {
+    var niceName = niceNameFromRegister(register);
+    return $http.get('/statistics/current_watts/'+register+'.json')
+             .then(function(res) {
+                var chartConfig = {
+                  options: {
+                    credits: { enabled: false },
+                    chart: { type: 'solidgauge' },
+                    xAxis: {
+                      categories: res.data.categories
+                    },
+                    yAxis: {
+                      stops: [
+                          [0.3, '#55BF3B'], // green
+                          [0.6, '#DDDF0D'], // yellow
+                          [0.9, '#DF5353'] // red
+                      ],
+                      max: res.data.yAxis.max,
+                      min: 0,
+                      title: {
+                        text: niceName + ' Watts',
+                        y: -90
+                      },
+                      labels: { y: 16 }
+                    },
+                    pane: {
+//                      center: ['50%', '85%'],
+                      startAngle: -90,
+                      endAngle: 90,
+                      background: {
+                        backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+                        innerRadius: '60%',
+                        outerRadius: '100%',
+                        shape: 'arc'
+                      }
+                    },
+                    plotOptions: {
+                      solidgauge: {
+                        dataLabels: {
+                          y: -40,
+                          borderWidth: 0,
+                          useHTML: true
+                        }
+                      }
+                    }
+                  },
+                  series: res.data.series,
+                  title: { text: 'Current '+niceName },
+                  loading: false
+                };
+              chartConfig.series[0].dataLabels = {
+                format: '<div style="text-align:center"><span style="font-size:25px;color:' +
+                    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y} W</span>'
+              }
+
+               return chartConfig;
+             });
+  };
+  o.getDaily = function(register) {
+    var niceName = niceNameFromRegister(register);
+    return $http.get('/statistics/daily/'+register+'.json')
+             .then(function(res) {
+                var chartConfig = {
+                  options: {
+                    credits: { enabled: false },
+                    chart: { type: 'column' },
+                    xAxis: {
+                      categories: res.data.categories
+                    },
+                    legend: { enabled: false }
+                  },
+                  series: res.data.series,
+                  title: { text: 'Daily '+niceName },
+                  loading: false
+                };
+
+               return chartConfig;
+             });
+  };
+
   o.getYtdByYear = function(register) {
-    var nice_name = niceNameFromRegister(register);
+    var niceName = niceNameFromRegister(register);
     return $http.get('/statistics/ytd_by_year/'+register+'.json')
              .then(function(res) {
                 var chartConfig = {
@@ -33,7 +113,7 @@ function($http) {
                     legend: { enabled: false }
                   },
                   series: res.data.series,
-                  title: { text: 'Year-to-date '+nice_name+' by Year' },
+                  title: { text: 'Year-to-date '+niceName+' by Year' },
                   loading: false
                 };
 
@@ -42,7 +122,7 @@ function($http) {
   };
 
   o.getHourlyVsHistorical = function(register) {
-    var nice_name = niceNameFromRegister(register);
+    var niceName = niceNameFromRegister(register);
     return $http.get('/statistics/hourly_vs_historical/'+register+'.json')
              .then(function(res) {
                 var chartConfig = {
@@ -55,7 +135,7 @@ function($http) {
                     plotOptions: {}
                   },
                   series: res.data.series,
-                  title: { text: 'Hourly '+nice_name+' vs Historical' },
+                  title: { text: 'Hourly '+niceName+' vs Historical' },
                   loading: false
                 };
 
@@ -64,7 +144,7 @@ function($http) {
   };
 
   o.getMonthlyByYear = function(register) {
-    var nice_name = niceNameFromRegister(register);
+    var niceName = niceNameFromRegister(register);
     return $http.get('/statistics/monthly_by_year/'+register+'.json')
              .then(function(res) {
                 var chartConfig = {
@@ -83,7 +163,7 @@ function($http) {
 
                   },
                   series: res.data.series,
-                  title: { text: 'Monthly '+nice_name+' By Year' },
+                  title: { text: 'Monthly '+niceName+' By Year' },
                   loading: false
                 };
 
@@ -92,7 +172,7 @@ function($http) {
   };
 
   o.getHourlyPastYear = function(register) {
-    var nice_name = niceNameFromRegister(register);
+    var niceName = niceNameFromRegister(register);
     var min_hour = 0;
     var max_hour = 23;
 
@@ -115,7 +195,7 @@ function($http) {
                       margin: [60, 10, 80, 50]
                     },
                     title: {
-                      text: 'Hourly '+nice_name
+                      text: 'Hourly '+niceName
                     },
                     xAxis: {
                       type: 'datetime',
@@ -171,7 +251,7 @@ function($http) {
                     data: res.data.series.data,
                     nullColor: '#3060cf',
                     tooltip: {
-                      headerFormat: nice_name +' Wh<br/>',
+                      headerFormat: niceName +' Wh<br/>',
                       pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} Wh</b>'
                     },
                     borderWidth: 0,

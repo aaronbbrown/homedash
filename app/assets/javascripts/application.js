@@ -4,5 +4,6 @@
 //= require highcharts
 //= require highcharts/highcharts-more
 //= require highcharts/modules/heatmap
+//= require highcharts/modules/solid-gauge
 //= require highcharts-ng
 //= require_tree .

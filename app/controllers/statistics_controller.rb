@@ -27,6 +27,10 @@ class StatisticsController < ApplicationController
         hourly_vs_historical(register_name: params[:register])
       when 'ytd_by_year'
         Series.ytd_by_year(register_name: params[:register])
+      when 'daily'
+        Series.daily(register_name: params[:register])
+      when 'current_watts'
+        Series.current_watts(register_name: params[:register])
       else
         raise ActionController::RoutingError.new('Not Found')
         false

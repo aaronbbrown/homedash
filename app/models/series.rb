@@ -189,8 +189,53 @@ class Series < Sequel::Model
 
       data = wh_by_year.map { |year,wh| wh.to_i }
       categories = wh_by_year.map { |year,wh| year.to_i.to_s }
-      { series: [{ data: data }],
+      { series: [{ name: 'Watt hours', data: data }],
         categories: categories }
+    end
+
+    # return daily watt_hours for the last week
+    def daily(register_name:)
+      register_id = Register.first(name: register_name).id
+      results = Series.
+        select { [abs(sum(:watt_hours)).as('watt_hours'),
+                  date(:time).as('date')] }.
+        where(register_id: register_id).
+        where { date(:time) > Sequel.lit("now() - interval '7 days'") }.
+        group_by { date(:time) }.
+        order_by { date(:time) }
+
+      wh_by_day = results.map do |row|
+        [row[:date], row[:watt_hours].to_i]
+      end
+
+      data = wh_by_day.map { |day,wh| wh.to_i }
+      categories = wh_by_day.map { |day,wh| day.to_s }
+      { series: [{ name: 'Watt hours', data: data }],
+        categories: categories }
+    end
+
+    # return the most recent value, in watts.  Assumes times are
+    # at 1 minute granularity
+    def current_watts(register_name:)
+      granularity = 60 # seconds
+      secs_per_min = 3600
+      register_id = Register.first(name: register_name).id
+      results = Series.reverse_order(:time).first(register_id: register_id)
+
+      max_wh = Series
+        .where(register_id: register_id)
+        .where{ time > Sequel.lit("now() - interval '1 year'")}
+        .max{abs(:watt_hours)}
+      max_watts = (max_wh / (granularity/secs_per_min.to_f)).to_f.round(1)
+      watts = (results.watt_hours / (granularity/secs_per_min.to_f)).abs.to_f.round(1)
+
+      { categories: [ results.time.to_i ],
+        yAxis: { max: max_watts.to_i },
+        series: [{
+          name: 'Watts',
+          data: [watts],
+          tooltip: { valueSuffix: ' Watts' }
+      }]}
     end
   end
 end

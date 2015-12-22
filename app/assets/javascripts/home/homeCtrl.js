@@ -2,33 +2,51 @@ homedash.controller('HomeCtrl', [
 '$scope',
 '$interval',
 'charts',
-'monthlyGenYear',
-'hourlyGenPastYear',
+'registerName',
+'monthlyByYear',
+'hourlyPastYear',
 'hourlyVsHistorical',
 'ytdByYear',
+'daily',
+'currentWatts',
 
-function($scope, $interval, charts, monthlyGenYear,
-         hourlyGenPastYear, hourlyVsHistorical, ytdByYear) {
-  $scope.myChartConfig = monthlyGenYear;
-  $scope.hpyChartConfig = hourlyGenPastYear;
+function($scope, $interval, charts, registerName,
+         monthlyByYear,
+         hourlyPastYear, hourlyVsHistorical, ytdByYear,
+         daily, currentWatts) {
+  $scope.myChartConfig = monthlyByYear;
+  $scope.hpyChartConfig = hourlyPastYear;
   $scope.hvhChartConfig = hourlyVsHistorical;
   $scope.ytdChartConfig = ytdByYear;
+  $scope.dailyChartConfig = daily;
+  $scope.currWChartConfig = currentWatts;
 
-  var callHourlyVsHistorical = function() {
-    var promise = charts.getHourlyVsHistorical('gen');
+  var callChartPromise = function(chartName, register, chartConfig) {
+    var promise ;
+    switch(chartName) {
+      case 'hvh':
+        promise = charts.getHourlyVsHistorical(register);
+        break;
+      case 'currentWatts':
+        promise = charts.getCurrentWatts(register);
+        break;
+      default:
+        return;
+    };
     promise.then(function(data) {
-      if ( typeof $scope.hvhChartConfig.options.plotOptions.series === "undefined" ) {
-        $scope.hvhChartConfig.options.plotOptions.series = {};
+      if ( typeof chartConfig.options.plotOptions.series === "undefined" ) {
+        chartConfig.options.plotOptions.series = {};
       };
-      $scope.hvhChartConfig.options.plotOptions.series.animation = false;
+      chartConfig.options.plotOptions.series.animation = false;
       for ( var i in data.series ) {
-        $scope.hvhChartConfig.series[i].data = data.series[i].data;
+        chartConfig.series[i].data = data.series[i].data;
       };
-      $scope.hvhChartConfig.options.plotOptions.series.animation = true;
+      chartConfig.options.plotOptions.series.animation = true;
     });
   };
 
-  $interval(callHourlyVsHistorical, 15000);
+  $interval(callChartPromise, 15000, 0, true, 'hvh', registerName, $scope.hvhChartConfig);
+  $interval(callChartPromise, 15000, 0, true, 'currentWatts', registerName, $scope.currWChartConfig);
 }]);
 
 
