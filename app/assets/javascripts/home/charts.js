@@ -25,6 +25,7 @@ function($http) {
              .then(function(res) {
                 var chartConfig = {
                   options: {
+                    credits: { enabled: false },
                     chart: { type: 'column' },
                     xAxis: {
                       categories: res.data.categories
@@ -51,6 +52,7 @@ function($http) {
              .then(function(res) {
                 var chartConfig = {
                   options: {
+                    credits: { enabled: false },
                     chart: { type: 'column' },
                     xAxis: {
                       categories: res.data.categories
@@ -90,6 +92,7 @@ function($http) {
              .then(function(res) {
                 var chartConfig = {
                   options: {
+                    credits: { enabled: false },
                     chart: {
                       type: 'heatmap',
                       margin: [60, 10, 80, 50]
