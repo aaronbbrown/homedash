@@ -16,7 +16,7 @@ function($stateProvider, $urlRouterProvider) {
         monthlyByYear: ['charts', function(charts) {
           return charts.getMonthlyByYear('gen');
         }],
-        hourlyByPastYear: ['charts', function(charts) {
+        hourlyPastYear: ['charts', function(charts) {
           return charts.getHourlyPastYear('gen');
         }],
         hourlyVsHistorical: ['charts', function(charts) {
