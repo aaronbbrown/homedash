@@ -5,6 +5,15 @@ require 'action_controller/railtie'
 require 'action_mailer/railtie'
 require 'sprockets/railtie'
 
+ActiveSupport::Logger.class_eval do
+  # monkey patching here so there aren't duplicate lines in console/server
+  # see https://github.com/rails/rails/issues/11415
+  def self.broadcast(logger)
+    Module.new do
+    end
+  end
+end
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -12,6 +21,7 @@ Bundler.require(*Rails.groups)
 module Homedash
   class Application < Rails::Application
     config.logger = ::Logger.new($stdout)
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
