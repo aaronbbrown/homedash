@@ -77,6 +77,7 @@ function($http) {
                return chartConfig;
              });
   };
+
   o.getDaily = function(register) {
     var niceName = niceNameFromRegister(register);
     return $http.get('/statistics/daily/'+register+'.json')
@@ -87,6 +88,11 @@ function($http) {
                     chart: { type: 'column' },
                     xAxis: {
                       categories: res.data.categories
+                    },
+                    yAxis: {
+                      title: {
+                        text: 'Watt-hours'
+                      }
                     },
                     legend: { enabled: false }
                   },
@@ -110,6 +116,11 @@ function($http) {
                     xAxis: {
                       categories: res.data.categories
                     },
+                    yAxis: {
+                      title: {
+                        text: 'Watt-hours'
+                      }
+                    },
                     legend: { enabled: false }
                   },
                   series: res.data.series,
@@ -132,6 +143,11 @@ function($http) {
                     xAxis: {
                       categories: res.data.categories
                     },
+                    yAxis: {
+                      title: {
+                        text: 'Watt-hours'
+                      }
+                    },
                     plotOptions: {}
                   },
                   series: res.data.series,
@@ -153,6 +169,11 @@ function($http) {
                     chart: { type: 'column' },
                     xAxis: {
                       categories: res.data.categories
+                    },
+                    yAxis: {
+                      title: {
+                        text: 'Watt-hours'
+                      }
                     },
                     plotOptions: {
                       column: {
