@@ -51,7 +51,8 @@ function($http) {
                     chart: { type: 'column' },
                     xAxis: {
                       categories: res.data.categories
-                    }
+                    },
+                    plotOptions: {}
                   },
                   series: res.data.series,
                   title: { text: 'Hourly '+nice_name+' vs Historical' },

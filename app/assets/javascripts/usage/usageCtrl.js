@@ -9,8 +9,8 @@ homedash.controller('UsageCtrl', [
 
 function($scope, $interval, charts, monthlyUsageYear,
          hourlyUsagePastYear, hourlyVsHistorical, ytdByYear) {
-  $scope.muyChartConfig = monthlyUsageYear;
-  $scope.hupyChartConfig = hourlyUsagePastYear;
+  $scope.myChartConfig = monthlyUsageYear;
+  $scope.hpyChartConfig = hourlyUsagePastYear;
   $scope.hvhChartConfig = hourlyVsHistorical;
   $scope.ytdChartConfig = ytdByYear;
 

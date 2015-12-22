@@ -3,14 +3,14 @@ homedash.controller('HomeCtrl', [
 '$interval',
 'charts',
 'monthlyGenYear',
-'dailyGenHour',
+'hourlyGenPastYear',
 'hourlyVsHistorical',
 'ytdByYear',
 
 function($scope, $interval, charts, monthlyGenYear,
-         dailyGenHour, hourlyVsHistorical, ytdByYear) {
-  $scope.mgyChartConfig = monthlyGenYear;
-  $scope.heatChartConfig = dailyGenHour;
+         hourlyGenPastYear, hourlyVsHistorical, ytdByYear) {
+  $scope.myChartConfig = monthlyGenYear;
+  $scope.hpyChartConfig = hourlyGenPastYear;
   $scope.hvhChartConfig = hourlyVsHistorical;
   $scope.ytdChartConfig = ytdByYear;
 

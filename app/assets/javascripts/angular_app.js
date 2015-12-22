@@ -13,7 +13,7 @@ function($stateProvider, $urlRouterProvider) {
         monthlyGenYear: ['charts', function(charts) {
           return charts.getMonthlyByYear('gen');
         }],
-        dailyGenHour: ['charts', function(charts) {
+        hourlyGenPastYear: ['charts', function(charts) {
           return charts.getHourlyPastYear('gen');
         }],
         hourlyVsHistorical: ['charts', function(charts) {
@@ -26,7 +26,7 @@ function($stateProvider, $urlRouterProvider) {
 
     }).state('usage', {
       url: '/usage',
-      templateUrl: 'usage/_usage.html',
+      templateUrl: 'home/_home.html',
       controller: 'UsageCtrl',
       resolve: {
         monthlyUsageYear: ['charts', function(charts) {
