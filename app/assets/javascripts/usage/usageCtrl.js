@@ -5,11 +5,14 @@ homedash.controller('UsageCtrl', [
 'monthlyUsageYear',
 'hourlyUsagePastYear',
 'hourlyVsHistorical',
+'ytdByYear',
 
-function($scope, $interval, charts, monthlyUsageYear, hourlyUsagePastYear, hourlyVsHistorical) {
+function($scope, $interval, charts, monthlyUsageYear,
+         hourlyUsagePastYear, hourlyVsHistorical, ytdByYear) {
   $scope.muyChartConfig = monthlyUsageYear;
   $scope.hupyChartConfig = hourlyUsagePastYear;
   $scope.hvhChartConfig = hourlyVsHistorical;
+  $scope.ytdChartConfig = ytdByYear;
 
   var callHourlyVsHistorical = function() {
     var promise = charts.getHourlyVsHistorical('use');

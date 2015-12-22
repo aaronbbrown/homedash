@@ -17,19 +17,21 @@ class StatisticsController < ApplicationController
   end
 
   def show_by_register
-    result = Rails.cache.fetch("#{params[:id]}_#{params[:register]}", expires_in: 1.hour) do
-      case params[:id]
+#    result = Rails.cache.fetch("#{params[:id]}_#{params[:register]}", expires_in: 1.minute) do
+      result = case params[:id]
       when 'monthly_by_year'
         Series.monthly_by_year(register_name: params[:register])
       when 'hourly_past_year'
         Series.daily_by_hour(register_name: params[:register])
       when 'hourly_vs_historical'
         hourly_vs_historical(register_name: params[:register])
+      when 'ytd_by_year'
+        Series.ytd_by_year(register_name: params[:register])
       else
         raise ActionController::RoutingError.new('Not Found')
         false
       end
-    end
+#    end
     respond_with result
   end
 

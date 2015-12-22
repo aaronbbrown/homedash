@@ -167,5 +167,30 @@ class Series < Sequel::Model
         },
         labels: ['date','hour','Watt hours (Wh)']}
     end
+
+    # show year-to-date for every year that we have data
+    # prior years will show data up to the current date,
+    # not the entire year.  So, if it's 7/4/2015,
+    # 2013 and 2014 will be ytd until 7/4/2013 and 7/4/2014
+    # respectively
+    def ytd_by_year(register_name:)
+      register_id = Register.first(name: register_name).id
+      results = Series.
+        select { [abs(sum(:watt_hours)).as('watt_hours'),
+                  date_part('year', :time).as('year')] }.
+        where(register_id: register_id).
+        where { date_part('doy', :time) <= date_part('doy', Sequel.lit("now()")) }.
+        group_by { date_part('year', :time) }.
+        order_by { date_part('year', :time) }
+
+      wh_by_year = results.map do |row|
+        [row[:year], row[:watt_hours].to_i]
+      end
+
+      data = wh_by_year.map { |year,wh| wh.to_i }
+      categories = wh_by_year.map { |year,wh| year.to_i.to_s }
+      { series: [{ data: data }],
+        categories: categories }
+    end
   end
 end

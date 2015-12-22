@@ -6,7 +6,7 @@ function($http) {
   };
   var pointWidth = 7;
 
-  o.niceNameFromRegister = function(register) {
+  function niceNameFromRegister(register) {
     var result = '';
     switch(register) {
     case 'gen':
@@ -19,9 +19,9 @@ function($http) {
     return result;
   };
 
-  o.getHourlyVsHistorical = function(register) {
-    var nice_name = this.niceNameFromRegister(register);
-    return $http.get('/statistics/hourly_vs_historical/'+register+'.json')
+  o.getYtdByYear = function(register) {
+    var nice_name = niceNameFromRegister(register);
+    return $http.get('/statistics/ytd_by_year/'+register+'.json')
              .then(function(res) {
                 var chartConfig = {
                   options: {
@@ -30,11 +30,27 @@ function($http) {
                     xAxis: {
                       categories: res.data.categories
                     },
-                    plotOptions: {
-                      column: {
-                        pointWidth: pointWidth,
-                        groupPadding: 0.05,
-                      }
+                    legend: { enabled: false }
+                  },
+                  series: res.data.series,
+                  title: { text: 'Year-to-date '+nice_name+' by Year' },
+                  loading: false
+                };
+
+               return chartConfig;
+             });
+  };
+
+  o.getHourlyVsHistorical = function(register) {
+    var nice_name = niceNameFromRegister(register);
+    return $http.get('/statistics/hourly_vs_historical/'+register+'.json')
+             .then(function(res) {
+                var chartConfig = {
+                  options: {
+                    credits: { enabled: false },
+                    chart: { type: 'column' },
+                    xAxis: {
+                      categories: res.data.categories
                     }
                   },
                   series: res.data.series,
@@ -47,7 +63,7 @@ function($http) {
   };
 
   o.getMonthlyByYear = function(register) {
-    var nice_name = this.niceNameFromRegister(register);
+    var nice_name = niceNameFromRegister(register);
     return $http.get('/statistics/monthly_by_year/'+register+'.json')
              .then(function(res) {
                 var chartConfig = {
@@ -75,7 +91,7 @@ function($http) {
   };
 
   o.getHourlyPastYear = function(register) {
-    var nice_name = this.niceNameFromRegister(register);
+    var nice_name = niceNameFromRegister(register);
     var min_hour = 0;
     var max_hour = 23;
 
@@ -165,28 +181,6 @@ function($http) {
              });
   };
 
-/*
-  o.create = function(post) {
-    console.log(post);
-    return $http.post('/posts.json', post)
-             .success(function(data) {
-               o.posts.push(data);
-             });
-  };
-  o.upvote = function(post) {
-    return $http.put('/posts/' + post.id + '/upvote.json')
-             .success(function(data){
-               post.upvotes += 1;
-             });
-  };
-
-  o.get = function(id) {
-    return $http.get('/posts/' + id + '.json')
-             .then(function(res) {
-               return res.data;
-             });
-  };
-  */
   return o;
 }])
 

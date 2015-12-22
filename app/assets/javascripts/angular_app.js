@@ -13,19 +13,18 @@ function($stateProvider, $urlRouterProvider) {
         monthlyGenYear: ['charts', function(charts) {
           return charts.getMonthlyByYear('gen');
         }],
-
         dailyGenHour: ['charts', function(charts) {
           return charts.getHourlyPastYear('gen');
         }],
-
         hourlyVsHistorical: ['charts', function(charts) {
           return charts.getHourlyVsHistorical('gen');
+        }],
+        ytdByYear: ['charts', function(charts) {
+          return charts.getYtdByYear('gen');
         }]
-
       }
 
-    })
-    .state('usage', {
+    }).state('usage', {
       url: '/usage',
       templateUrl: 'usage/_usage.html',
       controller: 'UsageCtrl',
@@ -33,14 +32,16 @@ function($stateProvider, $urlRouterProvider) {
         monthlyUsageYear: ['charts', function(charts) {
           return charts.getMonthlyByYear('use');
         }],
-
         hourlyUsagePastYear: ['charts', function(charts) {
           return charts.getHourlyPastYear('use');
         }],
-
         hourlyVsHistorical: ['charts', function(charts) {
           return charts.getHourlyVsHistorical('use');
+        }],
+        ytdByYear: ['charts', function(charts) {
+          return charts.getYtdByYear('use');
         }]
+
       }
     });
 
