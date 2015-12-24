@@ -9,17 +9,19 @@ homedash.controller('HomeCtrl', [
 'ytdByYear',
 'daily',
 'currentWatts',
+'dailyWattHourHistogram',
 
 function($scope, $interval, charts, registerName,
          monthlyByYear,
          hourlyPastYear, hourlyVsHistorical, ytdByYear,
-         daily, currentWatts) {
+         daily, currentWatts, dailyWattHourHistogram) {
   $scope.myChartConfig = monthlyByYear;
   $scope.hpyChartConfig = hourlyPastYear;
   $scope.hvhChartConfig = hourlyVsHistorical;
   $scope.ytdChartConfig = ytdByYear;
   $scope.dailyChartConfig = daily;
   $scope.currWChartConfig = currentWatts;
+  $scope.dailyWattHourChartConfig = dailyWattHourHistogram;
 
   var callChartPromise = function(chartName, register, chartConfig) {
     var promise ;

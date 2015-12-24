@@ -53,7 +53,7 @@ class Series < Sequel::Model
           )
           FROM t WHERE n IS NOT NULL
         )
-        SELECT n as year FROM t WHERE n IS NOT NULL ORDER BY n DESC;
+        SELECT n as year FROM t WHERE n IS NOT NULL ORDER BY n;
       SQL
 
       years = Sequel::Model.db[query, register_id, register_id].map { |row| row[:year].to_i }
@@ -237,5 +237,53 @@ class Series < Sequel::Model
           tooltip: { valueSuffix: ' Watts' }
       }]}
     end
+
+    def daily_watt_hour_histogram(register_name:)
+      bucket_size = 2500
+      sql = <<-SQL
+        WITH daily_sums AS (
+          SELECT date_trunc('day',time) AS day,
+                abs(sum(watt_hours)) AS watt_hours
+          FROM series
+          WHERE register_id = ?
+          GROUP BY 1
+        ), limits AS (
+          SELECT max(date_part('year', day)::integer) as max_year,
+                min(date_part('year', day)::integer) as min_year,
+                max(watt_hours)::integer AS max_wh
+          FROM daily_sums
+        ), buckets AS (
+          SELECT range, year
+          FROM limits,
+              generate_series(0, limits.max_wh,
+                                 #{bucket_size}) AS range,
+              generate_series(limits.min_year,
+                              limits.max_year) AS year
+        ), bucketed_data AS (
+          SELECT count(*) AS cnt,
+                date_part('year',day) AS year,
+                (floor(watt_hours/#{bucket_size})*#{bucket_size})::integer AS range
+          FROM daily_sums
+          GROUP BY 2,3
+        )
+        SELECT coalesce(cnt,0) AS cnt, buckets.year, buckets.range
+        FROM buckets
+        LEFT JOIN bucketed_data
+          ON bucketed_data.year = buckets.year
+          AND bucketed_data.range = buckets.range
+        ORDER BY year, range
+      SQL
+
+      register_id = Register.first(name: register_name).id
+      results = Sequel::Model.db[sql, register_id].to_hash_groups(:year)
+      categories = results[results.keys.first].map { |x| x[:range] }
+      series = results.map do |year,data|
+        { name: year,
+          data: data.map { |x| x[:cnt] } }
+      end
+      { categories: categories,
+        series: series }
+    end
   end
 end
+

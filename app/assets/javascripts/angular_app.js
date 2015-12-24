@@ -30,8 +30,10 @@ function($stateProvider, $urlRouterProvider) {
         }],
         currentWatts: ['charts', function(charts) {
           return charts.getCurrentWatts('gen');
+        }],
+        dailyWattHourHistogram: ['charts', function(charts) {
+          return charts.getDailyWattHourHistogram('gen');
         }]
-
       }
 
     }).state('usage', {
@@ -59,6 +61,9 @@ function($stateProvider, $urlRouterProvider) {
         }],
         currentWatts: ['charts', function(charts) {
           return charts.getCurrentWatts('use');
+        }],
+        dailyWattHourHistogram: ['charts', function(charts) {
+          return charts.getDailyWattHourHistogram('use');
         }]
 
       }

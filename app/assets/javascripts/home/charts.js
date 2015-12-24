@@ -19,6 +19,36 @@ function($http) {
     return result;
   };
 
+  o.getDailyWattHourHistogram = function(register) {
+    var niceName = niceNameFromRegister(register);
+    return $http.get('/statistics/daily_watt_hour_histogram/'+register+'.json')
+             .then(function(res) {
+                var chartConfig = {
+                  options: {
+                    credits: { enabled: false },
+                    chart: { type: 'area' },
+                    xAxis: {
+                      categories: res.data.categories
+                    },
+                    yAxis: {
+                      title: {
+                        text: 'Watt-hours'
+                      }
+                    },
+                    plotOptions: {
+                      area: { fillOpacity: 0.25 }
+                    }
+                  },
+                  series: res.data.series,
+                  title: { text: 'Daily Watt Hours Per Year '+niceName },
+                  loading: false
+                };
+
+               return chartConfig;
+             });
+  };
+
+
   o.getCurrentWatts = function(register) {
     var niceName = niceNameFromRegister(register);
     return $http.get('/statistics/current_watts/'+register+'.json')
@@ -139,7 +169,7 @@ function($http) {
                 var chartConfig = {
                   options: {
                     credits: { enabled: false },
-                    chart: { type: 'column' },
+                    chart: { type: 'area' },
                     xAxis: {
                       categories: res.data.categories
                     },
@@ -148,7 +178,9 @@ function($http) {
                         text: 'Watt-hours'
                       }
                     },
-                    plotOptions: {}
+                    plotOptions: {
+                      area: { fillOpacity: 0.25 }
+                    }
                   },
                   series: res.data.series,
                   title: { text: 'Hourly '+niceName+' vs Historical' },
@@ -166,7 +198,7 @@ function($http) {
                 var chartConfig = {
                   options: {
                     credits: { enabled: false },
-                    chart: { type: 'column' },
+                    chart: { type: 'area' },
                     xAxis: {
                       categories: res.data.categories
                     },
@@ -176,10 +208,7 @@ function($http) {
                       }
                     },
                     plotOptions: {
-                      column: {
-                        pointWidth: pointWidth,
-                        groupPadding: 0.1
-                      }
+                      area: { fillOpacity: 0.25 }
                     }
 
                   },
