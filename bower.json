@@ -19,6 +19,7 @@
     "angular": "~1.4.8",
     "angular-ui-router": "~0.2.15",
     "bootstrap": "~3.3.6",
-    "highcharts": "highcharts-release#~4.2.0"
+    "highcharts": "highcharts-release#~4.2.0",
+    "highcharts-ng": "~0.0.11"
   }
 }

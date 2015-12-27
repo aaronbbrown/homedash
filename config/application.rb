@@ -21,8 +21,6 @@ Bundler.require(*Rails.groups)
 module Homedash
   class Application < Rails::Application
     config.logger = ::Logger.new($stdout)
-    config.assets.initialize_on_precompile = false
-
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
