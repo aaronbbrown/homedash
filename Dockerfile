@@ -11,5 +11,5 @@ ENV DATABASE_URL="sqlite://dummy.db"
 EXPOSE 3030
 RUN ln -s /usr/bin/nodejs /usr/bin/node
 RUN bower install --allow-root
-RUN ["rake","--trace","assets:precompile"]
+RUN rake --trace assets:precompile
 CMD ["unicorn_rails", "-p", "3030", "-c", "config/unicorn.rb"]
