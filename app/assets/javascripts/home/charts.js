@@ -28,11 +28,12 @@ function($http) {
                     credits: { enabled: false },
                     chart: { type: 'area' },
                     xAxis: {
-                      categories: res.data.categories
+                      categories: res.data.categories,
+                      title: { text: 'Watt-hours' }
                     },
                     yAxis: {
                       title: {
-                        text: 'Watt-hours'
+                        text: 'Days'
                       }
                     },
                     plotOptions: {
@@ -198,7 +199,7 @@ function($http) {
                 var chartConfig = {
                   options: {
                     credits: { enabled: false },
-                    chart: { type: 'area' },
+                    chart: { type: 'column' },
                     xAxis: {
                       categories: res.data.categories
                     },
@@ -208,7 +209,7 @@ function($http) {
                       }
                     },
                     plotOptions: {
-                      area: { fillOpacity: 0.25 }
+//                      area: { fillOpacity: 0.25 }
                     }
 
                   },
