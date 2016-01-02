@@ -92,9 +92,11 @@ class Series < Sequel::Model
                  date_trunc('hour', time) as time_hour
           FROM series s
           WHERE register_id = ?
-            AND date_part('week', time) = date_part('week', now())
+            AND time < now() - interval '1 week'
+            AND date_part('doy', time) BETWEEN
+                    date_part('doy', now()) - 4
+                AND date_part('doy', now()) + 4
             #{hourly_restriction_sql(register_name: register_name)}
-            AND date_part('year', time) < date_part('year', now())
           GROUP BY date_trunc('hour', time)
           ORDER BY date_trunc('hour', time)
           ) sums
