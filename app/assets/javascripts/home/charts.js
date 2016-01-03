@@ -37,7 +37,9 @@ function($http) {
                       }
                     },
                     plotOptions: {
-                      area: { fillOpacity: 0.25 }
+                      area: { 
+                        stacking: 'normal'
+                      }
                     }
                   },
                   series: res.data.series,
