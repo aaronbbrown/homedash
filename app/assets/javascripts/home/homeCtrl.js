@@ -22,6 +22,7 @@ function($scope, $interval, charts, registerName,
   $scope.dailyChartConfig = daily;
   $scope.currWChartConfig = currentWatts;
   $scope.dailyWattHourChartConfig = dailyWattHourHistogram;
+  $scope.intervals = [];
 
   var callChartPromise = function(chartName, register, chartConfig) {
     var promise ;
@@ -47,8 +48,18 @@ function($scope, $interval, charts, registerName,
     });
   };
 
-  $interval(callChartPromise, 15000, 0, true, 'hvh', registerName, $scope.hvhChartConfig);
-  $interval(callChartPromise, 15000, 0, true, 'currentWatts', registerName, $scope.currWChartConfig);
+  $scope.intervals.push($interval(callChartPromise,
+                        15000, 0, true, 'hvh', registerName,
+                        $scope.hvhChartConfig));
+  $scope.intervals.push($interval(callChartPromise,
+                        15000, 0, true, 'currentWatts',
+                        registerName, $scope.currWChartConfig));
+
+  $scope.$on("$destroy", function() {
+    for ( i in $scope.intervals ) {
+      $interval.cancel($scope.intervals[i]);
+    }
+  });
 }]);
 
 
