@@ -10,30 +10,7 @@ function($stateProvider, $urlRouterProvider) {
       templateUrl: 'home/_home.html',
       controller: 'HomeCtrl',
       resolve: {
-        registerName: function() {
-          return 'gen';
-        },
-        monthlyByYear: ['charts', function(charts) {
-          return charts.getMonthlyByYear('gen');
-        }],
-        hourlyPastYear: ['charts', function(charts) {
-          return charts.getHourlyPastYear('gen');
-        }],
-        hourlyVsHistorical: ['charts', function(charts) {
-          return charts.getHourlyVsHistorical('gen');
-        }],
-        ytdByYear: ['charts', function(charts) {
-          return charts.getYtdByYear('gen');
-        }],
-        daily: ['charts', function(charts) {
-          return charts.getDaily('gen');
-        }],
-        currentWatts: ['charts', function(charts) {
-          return charts.getCurrentWatts('gen');
-        }],
-        dailyWattHourHistogram: ['charts', function(charts) {
-          return charts.getDailyWattHourHistogram('gen');
-        }]
+        registerName: function() { return 'gen'; }
       }
 
     }).state('usage', {
@@ -41,31 +18,7 @@ function($stateProvider, $urlRouterProvider) {
       templateUrl: 'home/_home.html',
       controller: 'HomeCtrl',
       resolve: {
-        registerName: function() {
-          return 'use';
-        },
-        monthlyByYear: ['charts', function(charts) {
-          return charts.getMonthlyByYear('use');
-        }],
-        hourlyPastYear: ['charts', function(charts) {
-          return charts.getHourlyPastYear('use');
-        }],
-        hourlyVsHistorical: ['charts', function(charts) {
-          return charts.getHourlyVsHistorical('use');
-        }],
-        ytdByYear: ['charts', function(charts) {
-          return charts.getYtdByYear('use');
-        }],
-        daily: ['charts', function(charts) {
-          return charts.getDaily('use');
-        }],
-        currentWatts: ['charts', function(charts) {
-          return charts.getCurrentWatts('use');
-        }],
-        dailyWattHourHistogram: ['charts', function(charts) {
-          return charts.getDailyWattHourHistogram('use');
-        }]
-
+        registerName: function() { return 'use'; }
       }
     });
 
