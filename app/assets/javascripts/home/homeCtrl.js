@@ -5,7 +5,7 @@ homedash.controller('HomeCtrl', [
 'registerName',
 
 function($scope, $interval, charts, registerName) {
-  $scope.intervals = [];
+  var intervals = [];
 
   var callChartPromise = function(chartName, register) {
     var promise ;
@@ -34,7 +34,7 @@ function($scope, $interval, charts, registerName) {
       default:
         return;
     };
-    promise.then(function(data) {
+    return promise.then(function(data) {
       switch(chartName) {
         case 'hvh':
           chartConfig = $scope.hvhChartConfig;
@@ -72,6 +72,7 @@ function($scope, $interval, charts, registerName) {
     });
   };
 
+  // load the charts once
   charts.getDailyWattHourHistogram(registerName).then(function(data) { $scope.dailyWattHourChartConfig = data; });
   charts.getDaily(registerName).then(function(data) { $scope.dailyChartConfig = data; });
   charts.getYtdByYear(registerName).then(function(data) { $scope.ytdChartConfig = data; });
@@ -80,17 +81,19 @@ function($scope, $interval, charts, registerName) {
   charts.getHourlyVsHistorical(registerName).then(function(data) { $scope.hvhChartConfig = data; });
   charts.getCurrentWatts(registerName).then(function(data) { $scope.currWChartConfig = data; });
 
-  $scope.intervals.push($interval(callChartPromise, 60*60*1000, 0, true, 'dailyWhHistogram', registerName));
-  $scope.intervals.push($interval(callChartPromise, 60*60*1000, 0, true, 'daily', registerName));
-  $scope.intervals.push($interval(callChartPromise, 60*60*1000, 0, true, 'hourlyPastYear', registerName));
-  $scope.intervals.push($interval(callChartPromise, 60*60*1000, 0, true, 'monthlyByYear', registerName));
-  $scope.intervals.push($interval(callChartPromise, 60*1000, 0, true, 'hvh', registerName));
-  $scope.intervals.push($interval(callChartPromise, 60*1000, 0, true, 'currentWatts', registerName));
+  // set intervals for the charts
+  intervals.push($interval(callChartPromise, 60*60*1000, 0, true, 'dailyWhHistogram', registerName));
+  intervals.push($interval(callChartPromise, 60*60*1000, 0, true, 'daily', registerName));
+  intervals.push($interval(callChartPromise, 60*60*1000, 0, true, 'hourlyPastYear', registerName));
+  intervals.push($interval(callChartPromise, 60*60*1000, 0, true, 'monthlyByYear', registerName));
+  intervals.push($interval(callChartPromise, 60*1000, 0, true, 'hvh', registerName));
+  intervals.push($interval(callChartPromise, 60*1000, 0, true, 'currentWatts', registerName));
 
-
+  // destroy all the intervals from above so we don't
+  // keep them around beyond the life of the controller
   $scope.$on("$destroy", function() {
-    for ( var i in $scope.intervals ) {
-      $interval.cancel($scope.intervals[i]);
+    for ( var i in intervals ) {
+      $interval.cancel(intervals[i]);
     }
   });
 }]);
