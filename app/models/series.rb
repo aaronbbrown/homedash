@@ -241,7 +241,7 @@ class Series < Sequel::Model
     end
 
     def daily_watt_hour_histogram(register_name:)
-      bucket_size = 2500
+      bucket_size = 1000
       sql = <<-SQL
         WITH daily_sums AS (
           SELECT date_trunc('day',time) AS day,
