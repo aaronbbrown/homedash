@@ -336,18 +336,19 @@ class Series < Sequel::Model
         FROM daily
         GROUP BY 1
         ORDER BY 1
+        LIMIT 18
       SQL
 
-      data = []
-      dates = []
-      Sequel::Model.db[sql, register_id].each do |row|
-        data << row[:percentiles]
-        dates << row[:month]
+      data = Sequel::Model.db[sql, register_id].map do |row|
+        { x: row[:month].to_i * 1000,
+          low: row[:percentiles][0],
+          q1: row[:percentiles][1],
+          median: row[:percentiles][2],
+          q3: row[:percentiles][3],
+          high: row[:percentiles][4] }
       end
 
-      { series: [{ data: data }],
-        since: dates.first.to_i * 1000,
-        until: dates.last.to_i * 1000 }
+      { series: [{ data: data }] }
     end
   end
 end
