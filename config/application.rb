@@ -36,5 +36,8 @@ module Homedash
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
 #    config.active_record.raise_in_transactional_callbacks = true
+    config.sequel.after_connect = proc do
+      Sequel::Model.db.extension :pg_array
+    end
   end
 end

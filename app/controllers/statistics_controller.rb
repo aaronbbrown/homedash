@@ -41,6 +41,8 @@ class StatisticsController < ApplicationController
         Series.current_watts(register_name: params[:register])
       when 'daily_watt_hour_histogram'
         Series.daily_watt_hour_histogram(register_name: params[:register])
+      when 'monthly_percentiles'
+        Series.monthly_percentiles(register_name: params[:register])
       else
         raise ActionController::RoutingError.new('Not Found')
         false
