@@ -13,6 +13,11 @@ function($scope, $location) {
       route_path: '/usage',
       href: '/#/usage',
       register: 'use',
+      active: false },
+    { name: 'Summary',
+      id: 'tab_summary',
+      route_path: '/summary',
+      href: '/#/summary',
       active: false }
   ];
 

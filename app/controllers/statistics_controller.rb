@@ -18,8 +18,8 @@ class StatisticsController < ApplicationController
 
   def show
     result = case params[:id]
-      when 'percent_gen_ytd'
-        Series.percent_gen_ytd
+      when 'percent_gen_last_year'
+        Series.percent_gen_last_year
     end
     respond_with result
   end

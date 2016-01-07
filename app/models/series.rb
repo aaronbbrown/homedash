@@ -33,27 +33,36 @@ class Series < Sequel::Model
       categories.compact.map { |index| data[index] || 0 }
     end
 
-    # get percentage of total usage that was generated
-    def percent_gen_ytd
-      boy = Time.mktime(Time.now.year)
+    # get percentage of total usage that was generated over the last 1 year
+    # or since the beginning of recording
+    def percent_gen_last_year
+      gen_start = Series.association_join(:register).
+                         where(name: 'gen').
+                         min(:time)
+
+      use_start = Series.association_join(:register).
+                         where(name: 'use').
+                         min(:time)
+
+      since = [gen_start,use_start].max
       results = Hash[%w{use gen}.map do |register_name|
         sum = Series.association_join(:register).
                      where(name: register_name).
-                     where{time >= boy}.
+                     where{time >= since}.
                      sum(:watt_hours).abs
         [register_name, sum]
       end]
 
-      solar_percent = ((results['gen']/results['use']) * 100).to_i 
       { series: [{
           data: [
             { name: 'Solar',
-              y: solar_percent },
+              y: results['gen'].to_i },
             { name: 'Grid',
-              y: 100 - solar_percent }
+              y: (results['use'] - results['gen']).to_i }
         ]}
-      ]}
+      ], since: since.to_i * 1000}
     end
+
 
     def monthly_by_year(register_name:)
       register_id = Register.first(name: register_name).id
