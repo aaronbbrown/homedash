@@ -16,6 +16,14 @@ class StatisticsController < ApplicationController
     respond_with response
   end
 
+  def show
+    result = case params[:id]
+      when 'percent_gen_ytd'
+        Series.percent_gen_ytd
+    end
+    respond_with result
+  end
+
   def show_by_register
 #    result = Rails.cache.fetch("#{params[:id]}_#{params[:register]}", expires_in: 1.minute) do
       result = case params[:id]
