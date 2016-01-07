@@ -19,6 +19,32 @@ function($http) {
     return result;
   };
 
+  o.getPercentGenLastYear = function() {
+    return $http.get('/statistics/percent_gen_last_year.json')
+      .then(function(res) {
+        var chartConfig = {
+          options: {
+            credits: { enabled: false },
+            chart: { type: 'pie' },
+            tooltip: { pointFormat: '<b>{point.y} Wh</b>' },
+            plotOptions: {
+              pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: { format: '<b>{point.name}</b>: {point.percentage:.0f} %' }
+              }
+            }
+          },
+          series: res.data.series,
+          title: {
+            text: 'Percent Electricity Generated vs Grid Since ' +
+                   Highcharts.dateFormat('%m/%d/%Y', res.data.since)
+          }
+        };
+        return chartConfig;
+    });
+  };
+
   o.getDailyWattHourHistogram = function(register) {
     var niceName = niceNameFromRegister(register);
     return $http.get('/statistics/daily_watt_hour_histogram/'+register+'.json')

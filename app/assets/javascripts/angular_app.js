@@ -20,6 +20,10 @@ function($stateProvider, $urlRouterProvider) {
       resolve: {
         registerName: function() { return 'use'; }
       }
+    }).state('summary', {
+      url: '/summary',
+      templateUrl: 'summary/_summary.html',
+      controller: 'SummaryCtrl'
     });
 
 
