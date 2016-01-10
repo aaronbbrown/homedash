@@ -55,9 +55,11 @@ function($http) {
           credits: { enabled: false },
           chart: { type: 'boxplot' },
           xAxis: { type: 'datetime' },
+          yAxis: { min: 0 },
           legend: { enabled: false }
         },
-        series: res.data.series
+        series: res.data.series,
+        title: { text: "Daily " + niceName + " by Month" }
       };
       return chartConfig;
     });
