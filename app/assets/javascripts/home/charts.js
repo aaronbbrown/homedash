@@ -45,6 +45,26 @@ function($http) {
     });
   };
 
+
+  o.getMonthlyBoxplot = function(register) {
+    var niceName = niceNameFromRegister(register);
+    return $http.get('/statistics/monthly_percentiles/'+register+'.json')
+      .then(function(res) {
+      var chartConfig = {
+        options: {
+          credits: { enabled: false },
+          chart: { type: 'boxplot' },
+          xAxis: { type: 'datetime' },
+          yAxis: { min: 0 },
+          legend: { enabled: false }
+        },
+        series: res.data.series,
+        title: { text: "Daily " + niceName + " by Month" }
+      };
+      return chartConfig;
+    });
+  };
+
   o.getDailyWattHourHistogram = function(register) {
     var niceName = niceNameFromRegister(register);
     return $http.get('/statistics/daily_watt_hour_histogram/'+register+'.json')

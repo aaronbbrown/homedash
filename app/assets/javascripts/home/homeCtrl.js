@@ -80,6 +80,7 @@ function($scope, $interval, charts, registerName) {
   charts.getMonthlyByYear(registerName).then(function(data) { $scope.myChartConfig = data; });
   charts.getHourlyVsHistorical(registerName).then(function(data) { $scope.hvhChartConfig = data; });
   charts.getCurrentWatts(registerName).then(function(data) { $scope.currWChartConfig = data; });
+  charts.getMonthlyBoxplot(registerName).then(function(data) { $scope.monthlyBoxPlotCC = data; });
 
   // set intervals for the charts
   intervals.push($interval(callChartPromise, 60*60*1000, 0, true, 'dailyWhHistogram', registerName));

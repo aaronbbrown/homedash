@@ -317,6 +317,39 @@ class Series < Sequel::Model
       { categories: categories,
         series: series }
     end
+
+# return 0,25,50,75,100 percentiles for daily watt_hours
+# per month
+    def monthly_percentiles(register_name:)
+      register_id = Register.first(name: register_name).id
+
+      sql = <<-SQL
+        WITH daily AS (
+          SELECT date(time) AS date, abs(sum(watt_hours)) AS wh
+          FROM series
+          WHERE register_id = ?
+          GROUP BY 1
+          ORDER BY 1
+        )
+        SELECT date_trunc('month', date) AS month,
+              percentile_cont(array[0,0.25,0.50,0.75,1.0]) WITHIN GROUP (ORDER BY wh) AS percentiles
+        FROM daily
+        GROUP BY 1
+        ORDER BY 1
+        LIMIT 18
+      SQL
+
+      data = Sequel::Model.db[sql, register_id].map do |row|
+        { x: row[:month].to_i * 1000,
+          low: row[:percentiles][0],
+          q1: row[:percentiles][1],
+          median: row[:percentiles][2],
+          q3: row[:percentiles][3],
+          high: row[:percentiles][4] }
+      end
+
+      { series: [{ data: data }] }
+    end
   end
 end
 
