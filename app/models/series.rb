@@ -328,6 +328,7 @@ class Series < Sequel::Model
           SELECT date(time) AS date, abs(sum(watt_hours)) AS wh
           FROM series
           WHERE register_id = ?
+            AND date_trunc('year', time) > now() - interval '18 months'
           GROUP BY 1
           ORDER BY 1
         )
@@ -336,7 +337,6 @@ class Series < Sequel::Model
         FROM daily
         GROUP BY 1
         ORDER BY 1
-        LIMIT 18
       SQL
 
       data = Sequel::Model.db[sql, register_id].map do |row|
