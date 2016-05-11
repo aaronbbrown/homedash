@@ -255,10 +255,10 @@ class Series < Sequel::Model
       register_id = Register.first(name: register_name).id
       results = Series.reverse_order(:time).first(register_id: register_id)
 
-      max_wh = Series
-        .where(register_id: register_id)
-        .where{ time > Sequel.lit("now() - interval '1 year'")}
-        .max{abs(:watt_hours)}
+      max_wh = Series.
+        where(register_id: register_id).
+        where{ time > Sequel.lit("now() - interval '1 year'")}.
+        max{abs(:watt_hours)}
       max_watts = (max_wh / (granularity/secs_per_min.to_f)).to_f.round(1)
       watts = (results.watt_hours / (granularity/secs_per_min.to_f)).abs.to_f.round(1)
 
