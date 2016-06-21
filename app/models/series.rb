@@ -254,6 +254,7 @@ class Series < Sequel::Model
       secs_per_min = 3600
       register_id = Register.first(name: register_name).id
       results = Series.reverse_order(:time).first(register_id: register_id)
+      Rails.logger.debug "current_watts#results: #{results.inspect}"
 
       max_wh = Series.
         where(register_id: register_id).
