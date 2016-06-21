@@ -44,7 +44,8 @@ class Series < Sequel::Model
                          where(name: 'use').
                          min(:time)
 
-      since = [gen_start,use_start].max
+      since = [gen_start,use_start, 1.year.ago].max
+      Rails.logger.debug "since: #{since}"
       results = Hash[%w{use gen}.map do |register_name|
         sum = Series.association_join(:register).
                      where(name: register_name).
