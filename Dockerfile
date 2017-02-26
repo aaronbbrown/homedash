@@ -1,7 +1,6 @@
-FROM ruby:2.2.4-onbuild
+FROM ruby:2.4.0-onbuild
 ENV LANG C.UTF-8
-RUN apt-get update
-RUN apt-get install -y nodejs npm
+RUN apt-get update && apt-get install -y nodejs npm && apt-get clean
 RUN useradd rails
 RUN npm install -g angular bower
 USER root
